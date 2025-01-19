@@ -60,6 +60,8 @@ def unet(pretrained_weights=None, input_size=(256, 256, 1)):
     # Compile the model
     model.compile(optimizer=Adam(learning_rate=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
+    model.summary()
+    
     # Load pretrained weights if provided
     if pretrained_weights:
         model.load_weights(pretrained_weights)
