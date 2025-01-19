@@ -5,6 +5,7 @@ import os
 import glob
 import skimage.io as io
 import skimage.transform as trans
+from PIL import Image
 
 
 def adjustData(img,mask,flag_multi_class,num_class):
