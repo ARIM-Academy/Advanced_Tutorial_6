@@ -6,22 +6,6 @@ import glob
 import skimage.io as io
 import skimage.transform as trans
 
-Sky = [128,128,128]
-Building = [128,0,0]
-Pole = [192,192,128]
-Road = [128,64,128]
-Pavement = [60,40,222]
-Tree = [128,128,0]
-SignSymbol = [192,128,128]
-Fence = [64,64,128]
-Car = [64,0,128]
-Pedestrian = [64,64,0]
-Bicyclist = [0,128,192]
-Unlabelled = [0,0,0]
-
-COLOR_DICT = np.array([Sky, Building, Pole, Road, Pavement,
-                          Tree, SignSymbol, Fence, Car, Pedestrian, Bicyclist, Unlabelled])
-
 
 def adjustData(img,mask,flag_multi_class,num_class):
     if(flag_multi_class):
@@ -115,16 +99,12 @@ def geneTrainNpy(image_path,mask_path,flag_multi_class = False,num_class = 2,ima
     return image_arr,mask_arr
 
 
-def labelVisualize(num_class,color_dict,img):
-    img = img[:,:,0] if len(img.shape) == 3 else img
-    img_out = np.zeros(img.shape + (3,))
-    for i in range(num_class):
-        img_out[img == i,:] = color_dict[i]
-    return img_out / 255
-
-
-
-def saveResult(save_path,npyfile,flag_multi_class = False,num_class = 2):
-    for i,item in enumerate(npyfile):
-        img = labelVisualize(num_class,COLOR_DICT,item) if flag_multi_class else item[:,:,0]
-        io.imsave(os.path.join(save_path,"%d_predict.png"%i),img)
+def saveResult(save_path, npyfile, flag_multi_class=False, num_class=2):
+    for i, item in enumerate(npyfile):
+        img = item[:,:,0]
+        img = (img - np.min(img)) / (np.max(img) - np.min(img))  # 正規化
+        img = np.uint8(img * 255)  # 0から255の範囲にスケーリング
+        im = Image.fromarray(img)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        im.save(os.path.join(save_path, "%d_predict.png"%i))
